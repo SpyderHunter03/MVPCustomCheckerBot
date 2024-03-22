@@ -1,0 +1,41 @@
+name: Build and Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/MVPCustomFileChecker.yml '  # Trigger on changes to this workflow file
+      - 'MVPCustomCheckerLibrary/**'
+      - 'MVPCustomCheckerProcessor/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/MVPCustomFileChecker.yml '  # Trigger on changes to this workflow file
+      - 'MVPCustomCheckerLibrary/**'
+      - 'MVPCustomCheckerProcessor/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3 # Checks out your repository under $GITHUB_WORKSPACE
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '8.0'  # Adjust according to your project's requirements
+
+    - name: Restore dependencies
+      run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot/MVPCustomCheckerBot.sln
+
+    - name: Build and Publish Project
+      run: |
+        dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerBot/MVPCustomCheckerProcessor.csproj -c Release -o /var/myapp
+
+    # - name: Setup Systemd Service
+    #   run: |
+    #     sudo cp /var/myapp/myapp.service /etc/systemd/system/
+    #     sudo systemctl daemon-reload
+    #     sudo systemctl restart myapp.service

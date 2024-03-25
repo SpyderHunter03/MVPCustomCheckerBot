@@ -20,11 +20,11 @@ jobs:
         dotnet-version: '8.0'  # Adjust according to your project's requirements
 
     - name: Restore dependencies
-      run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot/MVPCustomCheckerBot.sln
+      run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot.sln
 
     - name: Build and Publish Project
       run: |
-        dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerBot/MVPCustomCheckerProcessor.csproj -c Release -o /var/myapp
+        dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.csproj -c Release -o /var/myapp
 
     # - name: Setup Systemd Service
     #   run: |

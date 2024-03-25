@@ -22,6 +22,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot.sln
 
+    - name: Create deployment directory
+      run: |
+        sudo mkdir -p /var/myapp/
+        sudo chown $USER:$USER /var/myapp/
+
     - name: Build and Publish Project
       run: |
         dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.csproj -c Release -o /var/myapp

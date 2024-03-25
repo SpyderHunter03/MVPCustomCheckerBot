@@ -24,8 +24,8 @@ jobs:
 
     - name: Create deployment directory
       run: |
-        echo ${{ secrets.SUDOPWD }} | sudo mkdir -p /var/myapp/
-        echo ${{ secrets.SUDOPWD }} | sudo chown $USER:$USER /var/myapp/
+        echo ${{ secrets.SUDOPWD }} | sudo -S mkdir -p /var/myapp/
+        echo ${{ secrets.SUDOPWD }} | sudo -S chown $USER:$USER /var/myapp/
 
     - name: Build and Publish Project
       run: |

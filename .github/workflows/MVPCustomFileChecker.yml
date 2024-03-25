@@ -3,19 +3,11 @@ name: Build and Deploy Application
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '.github/workflows/MVPCustomFileChecker.yml'  # Trigger on changes to this workflow file
       - 'MVPCustomCheckerLibrary/**'
       - 'MVPCustomCheckerProcessor/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/MVPCustomFileChecker.yml'  # Trigger on changes to this workflow file
-      - 'MVPCustomCheckerLibrary/**'
-      - 'MVPCustomCheckerProcessor/**'
-
 jobs:
   deploy:
     runs-on: self-hosted

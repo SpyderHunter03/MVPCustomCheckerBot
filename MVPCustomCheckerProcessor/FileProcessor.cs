@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MVPCustomCheckerLibrary.DAL;
+using MVPCustomCheckerLibrary.DAL.Entities;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -15,7 +16,11 @@ namespace MVPCustomCheckerProcessor
         {
             try
             {
-                var lastProcessedDateString = await context.Settings.FirstOrDefaultAsync(s => s.Name.Equals("LastRead", StringComparison.InvariantCultureIgnoreCase));
+                var settings = await context.Settings.ToListAsync() ?? 
+                    throw new NullReferenceException(nameof(context));
+
+                var lastProcessedDateString = settings.FirstOrDefault(s => 
+                    s.Name.Equals("LastRead", StringComparison.InvariantCultureIgnoreCase));
                 var lastProcessedDate = lastProcessedDateString != null ?
                         DateTime.Parse(lastProcessedDateString.Setting).Date :
                         DateTime.MinValue.Date;
@@ -36,9 +41,45 @@ namespace MVPCustomCheckerProcessor
                 context.AvailableMolds.AddRange(availableCustomDiscs);
                 Console.WriteLine($"Saved available custom discs.");
 
-                lastProcessedDateString.Setting = DateTime.UtcNow.ToString();
-                Console.WriteLine($"Saved Last Read Setting.");
-                context.SaveChangesAsync();
+                //Save the last processing date
+                if (lastProcessedDateString is null)
+                {
+                    lastProcessedDateString = new Settings
+                    {
+                        Name = "LastRead",
+                        Setting = DateTime.UtcNow.ToString()
+                    };
+                    await context.Settings.AddAsync(lastProcessedDateString);
+                }
+                else
+                {
+                    lastProcessedDateString.Setting = DateTime.UtcNow.ToString();
+                }
+
+                //Get the next iteration time
+                var nextIteration = settings.FirstOrDefault(s => 
+                s.Name.Equals("NextRunInterval", StringComparison.InvariantCultureIgnoreCase));
+                if (nextIteration is null)
+                {
+                    nextIteration = new Settings
+                    {
+                        Name = "NextRunInterval",
+                        Setting = TimeSpan.FromHours(3).ToString()
+                    };
+                    await context.Settings.AddAsync(nextIteration);
+                }
+
+                var nextRun = settings.FirstOrDefault(s =>
+                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase))
+                    ?? new Settings
+                    {
+                        Name = "NextRun"
+                    };
+
+                nextRun.Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString();
+
+                await context.SaveChangesAsync();
+                Console.WriteLine($"Saved Settings.");
 
                 // Save the file only after confirming it has updates.
                 string localFilePath = Path.Combine(LocalStoragePath, $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");

@@ -34,5 +34,6 @@ jobs:
 
     - name: Update Cron Job to Run the Application
       run: |
-        (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/bin/dotnet /var/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.dll >> /var/MVPCustomCheckerProcessor/app.log 2>&1") | crontab -
+        (crontab -l 2>/dev/null; echo "*/5 * * * * /home/tristan/.dotnet/dotnet /var/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.dll >> /var/MVPCustomCheckerProcessor/app.log 2>&1") | crontab -
+
 

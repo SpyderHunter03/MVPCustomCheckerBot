@@ -20,6 +20,14 @@ jobs:
       with:
         dotnet-version: '8.0'  # Adjust according to your project's requirements
 
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './MVPCustomCheckerProcessor/appsettings.json'
+      env:
+        ConnectionStrings.Database: ${{ secrets.CONNECTION_STRING }}
+        Discord.Token: ${{ secrets.DISCORD_TOKEN }}
+        
     - name: Restore dependencies
       run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot.sln
 

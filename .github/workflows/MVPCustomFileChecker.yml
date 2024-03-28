@@ -8,6 +8,7 @@ on:
       - '.github/workflows/MVPCustomFileChecker.yml'  # Trigger on changes to this workflow file
       - 'MVPCustomCheckerLibrary/**'
       - 'MVPCustomCheckerProcessor/**'
+
 jobs:
   deploy:
     runs-on: self-hosted
@@ -24,15 +25,14 @@ jobs:
 
     - name: Create deployment directory
       run: |
-        echo ${{ secrets.SUDOPWD }} | sudo -S mkdir -p /var/myapp/
-        echo ${{ secrets.SUDOPWD }} | sudo -S chown $USER:$USER /var/myapp/
+        echo ${{ secrets.SUDOPWD }} | sudo -S mkdir -p /var/MVPCustomCheckerProcessor/
+        echo ${{ secrets.SUDOPWD }} | sudo -S chown $USER:$USER /var/MVPCustomCheckerProcessor/
 
     - name: Build and Publish Project
       run: |
-        dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.csproj -c Release -o /var/myapp
+        dotnet publish $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.csproj -c Release -o /var/MVPCustomCheckerProcessor
 
-    # - name: Setup Systemd Service
-    #   run: |
-    #     sudo cp /var/myapp/myapp.service /etc/systemd/system/
-    #     sudo systemctl daemon-reload
-    #     sudo systemctl restart myapp.service
+    - name: Update Cron Job to Run the Application
+      run: |
+        (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/bin/dotnet /var/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.dll >> /var/MVPCustomCheckerProcessor/app.log 2>&1") | crontab -
+

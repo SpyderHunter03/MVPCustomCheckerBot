@@ -26,6 +26,6 @@ optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionStr
 using var context = new MVPCustomCheckerContext(optionsBuilder.Options);
 
 var nextRun = await context.Settings.FirstOrDefaultAsync(s =>
-    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase));
+    EF.Functions.Like(s.Name, "NextRun"));
 if (nextRun is null || DateTime.Parse(nextRun.Setting) > DateTime.UtcNow)
     await FileProcessor.ProcessFile(context);

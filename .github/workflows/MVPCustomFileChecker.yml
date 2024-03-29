@@ -43,9 +43,3 @@ jobs:
     - name: Copy appsettings.json to deployment directory
       run: |
         cp $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/appsettings.json /var/MVPCustomCheckerProcessor/
-
-    - name: Update Cron Job to Run the Application
-      run: |
-        (crontab -l 2>/dev/null; echo "*/5 * * * * /home/tristan/.dotnet/dotnet /var/MVPCustomCheckerProcessor/MVPCustomCheckerProcessor.dll >> /var/MVPCustomCheckerProcessor/app.log 2>&1") | crontab -
-
-

@@ -38,13 +38,6 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot.sln
-
-    - name: Apply EF Core Migrations
-      run: dotnet ef database update --project MVPCustomCheckerLibrary.csproj
-      working-directory: ${{ github.workspace }}/MVPCustomCheckerLibrary
-      env:
-        ASPNETCORE_ENVIRONMENT: 'Production'
-        ConnectionStrings__Database: ${{ secrets.CONNECTION_STRING }}
         
     - name: Create deployment directory
       run: |
@@ -58,3 +51,8 @@ jobs:
     - name: Copy appsettings.json to deployment directory
       run: |
         cp $GITHUB_WORKSPACE/MVPCustomCheckerProcessor/appsettings.json /var/MVPCustomCheckerProcessor/
+
+    - name: Apply EF Core Migrations
+      run: dotnet ef database update --project $GITHUB_WORKSPACE/MVPCustomCheckerLibrary/MVPCustomCheckerLibrary.csproj
+      env:
+        ConnectionStrings__Database: ${{ secrets.CONNECTION_STRING }}

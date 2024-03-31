@@ -20,7 +20,7 @@ namespace MVPCustomCheckerProcessor
                     throw new NullReferenceException(nameof(context));
 
                 var lastProcessedDateString = settings.FirstOrDefault(s =>
-                    EF.Functions.Like(s.Name, "NextRun"));
+                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase));
                 var lastProcessedDate = lastProcessedDateString != null ?
                         DateTime.Parse(lastProcessedDateString.Setting).Date :
                         DateTime.MinValue.Date;
@@ -58,7 +58,7 @@ namespace MVPCustomCheckerProcessor
 
                 //Get the next iteration time
                 var nextIteration = settings.FirstOrDefault(s =>
-                EF.Functions.Like(s.Name, "NextRunInterval"));
+                    s.Name.Equals("NextRunInterval", StringComparison.InvariantCultureIgnoreCase));
                 if (nextIteration is null)
                 {
                     nextIteration = new Settings
@@ -70,11 +70,11 @@ namespace MVPCustomCheckerProcessor
                 }
 
                 var nextRun = settings.FirstOrDefault(s =>
-                    EF.Functions.Like(s.Name, "NextRun"))
+                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase))
                     ?? new Settings
                     {
                         Name = "NextRun"
-                    };
+                    }; ;
 
                 nextRun.Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString();
 

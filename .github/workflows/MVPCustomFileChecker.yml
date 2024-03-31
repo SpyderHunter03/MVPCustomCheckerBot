@@ -54,6 +54,6 @@ jobs:
 
     - name: Apply EF Core Migrations
       run: dotnet ef database update --project ../MVPCustomCheckerLibrary/MVPCustomCheckerLibrary.csproj
-      working-directory: $GITHUB_WORKSPACE/MVPCustomCheckerProcessor
+      working-directory: MVPCustomCheckerProcessor
       env:
         ConnectionStrings__Database: ${{ secrets.CONNECTION_STRING }}

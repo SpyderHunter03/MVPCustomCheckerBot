@@ -21,7 +21,9 @@ jobs:
         dotnet-version: '8.0'  # Adjust according to your project's requirements
 
     - name: Install EF Core CLI
-      run: dotnet tool install --global dotnet-ef
+      run: |
+        dotnet tool install --global dotnet-ef
+        echo "/home/tristan/.dotnet/tools" >> $GITHUB_PATH
 
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1

@@ -20,6 +20,9 @@ jobs:
       with:
         dotnet-version: '8.0'  # Adjust according to your project's requirements
 
+    - name: Install EF Core CLI
+      run: dotnet tool install --global dotnet-ef
+
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
@@ -31,6 +34,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore $GITHUB_WORKSPACE/MVPCustomCheckerBot.sln
 
+    - name: Apply EF Core Migrations
+      run: dotnet ef database update --project $GITHUB_WORKSPACE/MVPCustomCheckerLibrary/MVPCustomCheckerLibrary.csproj
+      env:
+        ConnectionStrings__Database: ${{ secrets.CONNECTION_STRING }}
+        
     - name: Create deployment directory
       run: |
         echo ${{ secrets.SUDOPWD }} | sudo -S mkdir -p /var/MVPCustomCheckerProcessor/

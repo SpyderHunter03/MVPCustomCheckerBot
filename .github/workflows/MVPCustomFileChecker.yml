@@ -25,6 +25,9 @@ jobs:
         dotnet tool install --global dotnet-ef
         echo "/home/tristan/.dotnet/tools" >> $GITHUB_PATH
 
+    - name: Check PATH
+      run: echo $PATH
+
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:

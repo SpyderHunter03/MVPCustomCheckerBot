@@ -18,43 +18,6 @@ namespace MVPCustomCheckerProcessor
                 var settings = await context.Settings.ToListAsync() ?? 
                     throw new NullReferenceException(nameof(context));
 
-                var lastProcessedDateString = settings.FirstOrDefault(s =>
-                    s.Name.Equals("LastRead", StringComparison.InvariantCultureIgnoreCase));
-                var lastProcessedDate = lastProcessedDateString != null ?
-                        DateTime.Parse(lastProcessedDateString.Setting).Date :
-                        DateTime.MinValue.Date;
-
-                var workbook = await GetWorkbook();
-
-                Console.WriteLine($"Got workbook.");
-
-                if (!ExcelUpdatedAfterLastReadDate(workbook, lastProcessedDate))
-                {
-                    Console.WriteLine($"No updates to file since last time ran: {lastProcessedDate}");
-                    return;
-                }
-
-                Console.WriteLine($"Commencing file processing.");
-                var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
-
-                context.AvailableMolds.AddRange(availableCustomDiscs);
-                Console.WriteLine($"Saved available custom discs.");
-
-                //Save the last processing date
-                if (lastProcessedDateString is null)
-                {
-                    lastProcessedDateString = new Settings
-                    {
-                        Name = "LastRead",
-                        Setting = DateTime.UtcNow.ToString()
-                    };
-                    await context.Settings.AddAsync(lastProcessedDateString);
-                }
-                else
-                {
-                    lastProcessedDateString.Setting = DateTime.UtcNow.ToString();
-                }
-
                 //Get the next iteration time
                 var nextIteration = settings.FirstOrDefault(s =>
                     s.Name.Equals("NextRunInterval", StringComparison.InvariantCultureIgnoreCase));
@@ -82,6 +45,46 @@ namespace MVPCustomCheckerProcessor
                 else
                 {
                     nextRun.Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString();
+                }
+
+                var lastProcessedDateString = settings.FirstOrDefault(s =>
+                    s.Name.Equals("LastRead", StringComparison.InvariantCultureIgnoreCase));
+                var lastProcessedDate = lastProcessedDateString != null ?
+                        DateTime.Parse(lastProcessedDateString.Setting).Date :
+                        DateTime.MinValue.Date;
+
+                var workbook = await GetWorkbook();
+
+                Console.WriteLine($"Got workbook.");
+
+                if (!ExcelUpdatedAfterLastReadDate(workbook, lastProcessedDate))
+                {
+                    Console.WriteLine($"No updates to file since last time ran: {lastProcessedDate}");
+
+                    await context.SaveChangesAsync();
+
+                    return;
+                }
+
+                Console.WriteLine($"Commencing file processing.");
+                var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
+
+                context.AvailableMolds.AddRange(availableCustomDiscs);
+                Console.WriteLine($"Saved available custom discs.");
+
+                //Save the last processing date
+                if (lastProcessedDateString is null)
+                {
+                    lastProcessedDateString = new Settings
+                    {
+                        Name = "LastRead",
+                        Setting = DateTime.UtcNow.ToString()
+                    };
+                    await context.Settings.AddAsync(lastProcessedDateString);
+                }
+                else
+                {
+                    lastProcessedDateString.Setting = DateTime.UtcNow.ToString();
                 }
 
                 await context.SaveChangesAsync();

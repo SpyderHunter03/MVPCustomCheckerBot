@@ -28,9 +28,7 @@ using var context = new MVPCustomCheckerContext(optionsBuilder.Options);
 var nextRun = await context.Settings.FirstOrDefaultAsync(s =>
     EF.Functions.Like(s.Name, "NextRun"));
 
-Console.WriteLine($"Next run time: {nextRun?.Setting ?? "null"}");
-
-if (nextRun is not null && DateTime.UtcNow >= DateTime.Parse(nextRun.Setting))
+if (nextRun is not null && DateTime.UtcNow <= DateTime.Parse(nextRun.Setting))
 {
     Console.WriteLine($"Not running yet. Next run time: {nextRun?.Setting}");
     return;

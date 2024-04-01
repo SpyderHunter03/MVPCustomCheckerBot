@@ -111,6 +111,13 @@ namespace MVPCustomCheckerProcessor
 
         private static void SaveWorkbookToFile(IWorkbook workbook, string filePath)
         {
+            // Assuming 'filePath' contains the full path to the file, including the directory and file name
+            string directoryPath = Path.GetDirectoryName(filePath);
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(directoryPath);
+
+            // Now, safely create and write to the file
             using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             workbook.Write(fileStream);
         }

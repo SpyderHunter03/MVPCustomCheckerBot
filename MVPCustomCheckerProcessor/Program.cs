@@ -27,5 +27,12 @@ using var context = new MVPCustomCheckerContext(optionsBuilder.Options);
 
 var nextRun = await context.Settings.FirstOrDefaultAsync(s =>
     EF.Functions.Like(s.Name, "NextRun"));
-if (nextRun is null || DateTime.Parse(nextRun.Setting) > DateTime.UtcNow)
-    await FileProcessor.ProcessFile(context);
+
+if (nextRun is not null && DateTime.UtcNow >= DateTime.Parse(nextRun.Setting))
+{
+    Console.WriteLine($"Not running yet. Next run time: {nextRun}");
+    return;
+}
+
+await FileProcessor.ProcessFile(context);
+    

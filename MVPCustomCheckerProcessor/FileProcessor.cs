@@ -115,7 +115,13 @@ namespace MVPCustomCheckerProcessor
             string directoryPath = Path.GetDirectoryName(filePath);
 
             // Ensure the directory exists
-            Directory.CreateDirectory(directoryPath);
+            Directory.CreateDirectory(directoryPath, 
+                UnixFileMode.UserWrite | 
+                UnixFileMode.UserRead | 
+                UnixFileMode.UserExecute | 
+                UnixFileMode.GroupRead | 
+                UnixFileMode.GroupExecute |
+                UnixFileMode.OtherRead);
 
             // Now, safely create and write to the file
             using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);

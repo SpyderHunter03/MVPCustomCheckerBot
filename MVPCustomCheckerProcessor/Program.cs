@@ -3,11 +3,9 @@ using Microsoft.Extensions.Configuration;
 using MVPCustomCheckerLibrary.DAL;
 using MVPCustomCheckerProcessor;
 
-Console.WriteLine("[info] Starting the checker!");
 var _cts = new CancellationTokenSource();
 
 // Load the config file(we'll create this shortly)
-Console.WriteLine("[info] Loading config file..");
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var basePath = Directory.GetCurrentDirectory();
 var devSettingsPath = Path.Combine(basePath, $"appsettings.{environmentName}.json");
@@ -30,7 +28,7 @@ var nextRun = await context.Settings.FirstOrDefaultAsync(s =>
 
 if (nextRun is not null && DateTime.UtcNow <= DateTime.Parse(nextRun.Setting))
 {
-    Console.WriteLine($"Not running yet. Next run time: {nextRun?.Setting}");
+    Console.WriteLine($"Not running yet. Current Time: {DateTime.UtcNow} Next run time: {nextRun?.Setting}");
     return;
 }
 

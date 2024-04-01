@@ -10,8 +10,7 @@ namespace MVPCustomCheckerProcessor
     public static class FileProcessor
     {
         private static readonly string ExcelUrl = "https://mvpdiscsports.com/documents/MVP-Custom.xls";
-        private static readonly string LocalStoragePath = "/opt/MVPCustomCheckerProcessor/excelfiles";
-
+        
         public static async Task ProcessFile(MVPCustomCheckerContext context)
         {
             try
@@ -20,7 +19,7 @@ namespace MVPCustomCheckerProcessor
                     throw new NullReferenceException(nameof(context));
 
                 var lastProcessedDateString = settings.FirstOrDefault(s =>
-                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase));
+                    s.Name.Equals("LastRead", StringComparison.InvariantCultureIgnoreCase));
                 var lastProcessedDate = lastProcessedDateString != null ?
                         DateTime.Parse(lastProcessedDateString.Setting).Date :
                         DateTime.MinValue.Date;

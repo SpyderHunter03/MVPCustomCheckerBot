@@ -82,9 +82,7 @@ namespace MVPCustomCheckerProcessor
                 Console.WriteLine($"Saved Settings.");
 
                 // Save the file only after confirming it has updates.
-                string localFilePath = Path.Combine(LocalStoragePath, $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
-                SaveWorkbookToFile(workbook, localFilePath);
-                Console.WriteLine($"File saved at {localFilePath}");
+                SaveWorkbookToFile(workbook);
             }
             catch (Exception ex)
             {
@@ -109,10 +107,12 @@ namespace MVPCustomCheckerProcessor
             return workbook;
         }
 
-        private static void SaveWorkbookToFile(IWorkbook workbook, string filePath)
+        private static void SaveWorkbookToFile(IWorkbook workbook)
         {
+            var localFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
+
             // Assuming 'filePath' contains the full path to the file, including the directory and file name
-            string directoryPath = Path.GetDirectoryName(filePath);
+            string directoryPath = Path.GetDirectoryName(localFilePath);
 
             // Ensure the directory exists
             Directory.CreateDirectory(directoryPath, 
@@ -124,8 +124,10 @@ namespace MVPCustomCheckerProcessor
                 UnixFileMode.OtherRead);
 
             // Now, safely create and write to the file
-            using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            using var fileStream = new FileStream(localFilePath, FileMode.Create, FileAccess.Write);
             workbook.Write(fileStream);
+
+            Console.WriteLine($"File saved at {localFilePath}");
         }
 
         public static bool ExcelUpdatedAfterLastReadDate(IWorkbook workbook, DateTime lastReadDate)

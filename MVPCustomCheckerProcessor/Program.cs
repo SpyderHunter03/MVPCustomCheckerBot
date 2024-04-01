@@ -27,10 +27,7 @@ var nextRun = await context.Settings.FirstOrDefaultAsync(s =>
     EF.Functions.Like(s.Name, "NextRun"));
 
 if (nextRun is not null && DateTime.UtcNow <= DateTime.Parse(nextRun.Setting))
-{
-    Console.WriteLine($"Not running yet. Current Time: {DateTime.UtcNow} Next run time: {nextRun?.Setting}");
-    return;
-}
+    return; // You shall not pass! - Gandalf
 
 await FileProcessor.ProcessFile(context);
     

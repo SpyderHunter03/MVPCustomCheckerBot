@@ -69,13 +69,20 @@ namespace MVPCustomCheckerProcessor
                 }
 
                 var nextRun = settings.FirstOrDefault(s =>
-                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase))
-                    ?? new Settings
+                    s.Name.Equals("NextRun", StringComparison.InvariantCultureIgnoreCase));
+                if (nextRun is null)
+                {
+                    var newNextRun = new Settings
                     {
-                        Name = "NextRun"
-                    }; ;
-
-                nextRun.Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString();
+                        Name = "NextRun",
+                        Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString()
+                    };
+                    await context.Settings.AddAsync(newNextRun);
+                }
+                else
+                {
+                    nextRun.Setting = DateTime.UtcNow.Add(TimeSpan.Parse(nextIteration.Setting)).ToString();
+                }
 
                 await context.SaveChangesAsync();
                 Console.WriteLine($"Saved Settings.");

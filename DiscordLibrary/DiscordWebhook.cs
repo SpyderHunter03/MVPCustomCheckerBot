@@ -1,7 +1,5 @@
 ﻿using DiscordLibrary.Models;
 using MVPCustomCheckerLibrary.DAL.Entities;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
 
@@ -22,7 +20,8 @@ namespace DiscordLibrary
             using var client = new HttpClient();
             foreach (var webhook in webhooks)
             {
-                var response = await client.PostAsJsonAsync(webhook, payload);
+                var properWebhook = EnsureProperWebhook(webhook);
+                var response = await client.PostAsJsonAsync(properWebhook, payload);
                 if (response.IsSuccessStatusCode)
                     retval++;
             }
@@ -63,7 +62,8 @@ namespace DiscordLibrary
                 }
 
                 // Send the request
-                var response = await client.PostAsync(webhook, formData);
+                var properWebhook = EnsureProperWebhook(webhook);
+                var response = await client.PostAsync(properWebhook, formData);
                 if (response.IsSuccessStatusCode)
                     retval++;
             }
@@ -171,6 +171,30 @@ namespace DiscordLibrary
             }
 
             return description.ToString();
+        }
+
+        private static string EnsureProperWebhook(string webhook)
+        {
+            // Step 1: Insert /v10 in the URL
+            string modifiedUrl = webhook.Replace("/api/webhooks", "/api/v10/webhooks");
+
+            // Step 2: Append ?wait=true if not already present
+            if (!modifiedUrl.Contains("?wait=true"))
+            {
+                // Check if the URL already has a query string
+                if (modifiedUrl.Contains('?'))
+                {
+                    // If there is already a query string, append &wait=true
+                    modifiedUrl += "&wait=true";
+                }
+                else
+                {
+                    // If there is no query string, append ?wait=true
+                    modifiedUrl += "?wait=true";
+                }
+            }
+
+            return modifiedUrl;
         }
     }
 }

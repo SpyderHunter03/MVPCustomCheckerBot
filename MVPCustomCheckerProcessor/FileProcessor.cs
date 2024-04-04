@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DiscordLibrary;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using MVPCustomCheckerLibrary.DAL;
 using MVPCustomCheckerLibrary.DAL.Entities;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System.Configuration;
 
 namespace MVPCustomCheckerProcessor
 {
@@ -68,6 +71,7 @@ namespace MVPCustomCheckerProcessor
 
                 Console.WriteLine($"Commencing file processing.");
                 var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
+                var previousAvailableCustomDiscs = await context.AvailableMolds.ToListAsync();
 
                 context.AvailableMolds.AddRange(availableCustomDiscs);
                 Console.WriteLine($"Saved available custom discs.");
@@ -92,6 +96,9 @@ namespace MVPCustomCheckerProcessor
 
                 // Save the file only after confirming it has updates.
                 SaveWorkbookToFile(workbook);
+
+                // Send message to Discord
+                await SendMessageToDiscord(context, workbook, availableCustomDiscs, previousAvailableCustomDiscs);
             }
             catch (Exception ex)
             {
@@ -118,7 +125,9 @@ namespace MVPCustomCheckerProcessor
 
         private static void SaveWorkbookToFile(IWorkbook workbook)
         {
-            var localFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
+            var localFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
+                $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
 
             // Assuming 'filePath' contains the full path to the file, including the directory and file name
             string directoryPath = Path.GetDirectoryName(localFilePath);
@@ -137,6 +146,31 @@ namespace MVPCustomCheckerProcessor
             workbook.Write(fileStream);
 
             Console.WriteLine($"File saved at {localFilePath}");
+        }
+
+        private static async Task SendMessageToDiscord(
+            MVPCustomCheckerContext context, 
+            IWorkbook workbook, 
+            IEnumerable<AvailableMolds> availableMolds,
+            IEnumerable<AvailableMolds> previousAvailableMolds)
+        {
+            var memoryStream = new MemoryStream();
+            workbook.Write(memoryStream);
+            memoryStream.Position = 0;
+
+            var webhooks = await context.Webhooks.ToListAsync();
+            if (webhooks != null && webhooks.Count != 0)
+            {
+                await DiscordWebhook.SendMessageToWebhookWithAttachment(
+                webhooks.Select(w => w.Webhook),
+                memoryStream,
+                $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx",
+                availableMolds,
+                availableMolds.Where(c => !previousAvailableMolds.Contains(c)),
+                previousAvailableMolds.Where(c => !availableMolds.Contains(c))
+            );
+            }
+            
         }
 
         public static bool ExcelUpdatedAfterLastReadDate(IWorkbook workbook, DateTime lastReadDate)

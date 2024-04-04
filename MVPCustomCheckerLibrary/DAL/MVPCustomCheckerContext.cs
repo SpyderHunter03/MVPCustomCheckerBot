@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MVPCustomCheckerLibrary.DAL.Entities;
-using System;
 
 namespace MVPCustomCheckerLibrary.DAL
 {
@@ -8,5 +7,6 @@ namespace MVPCustomCheckerLibrary.DAL
     {
         public DbSet<Settings> Settings { get; set; }
         public DbSet<AvailableMolds> AvailableMolds { get; set; }
+        public DbSet<Webhooks> Webhooks { get; set; }
     }
 }

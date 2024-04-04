@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DiscordLibrary\DiscordLibrary.csproj" />
     <ProjectReference Include="..\MVPCustomCheckerLibrary\MVPCustomCheckerLibrary.csproj" />
   </ItemGroup>
 

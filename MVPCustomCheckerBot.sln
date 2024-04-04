@@ -3,15 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVPCustomCheckerBot", "MVPCustomCheckerBot\MVPCustomCheckerBot.csproj", "{7B610445-6298-44BB-802A-99F01E582E82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVPCustomCheckerBot", "MVPCustomCheckerBot\MVPCustomCheckerBot.csproj", "{7B610445-6298-44BB-802A-99F01E582E82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVPCustomCheckerProcessor", "MVPCustomCheckerProcessor\MVPCustomCheckerProcessor.csproj", "{E7509A65-1F93-41C9-9498-ED261F8F79AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVPCustomCheckerProcessor", "MVPCustomCheckerProcessor\MVPCustomCheckerProcessor.csproj", "{E7509A65-1F93-41C9-9498-ED261F8F79AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVPCustomCheckerLibrary", "MVPCustomCheckerLibrary\MVPCustomCheckerLibrary.csproj", "{89111A88-4A96-4968-8D75-064B4503A108}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVPCustomCheckerLibrary", "MVPCustomCheckerLibrary\MVPCustomCheckerLibrary.csproj", "{89111A88-4A96-4968-8D75-064B4503A108}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 - Applications", "01 - Applications", "{CD19F262-CF81-4869-9981-62A39BC50B48}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 - Libraries", "05 - Libraries", "{DA6A9C8D-96DA-435E-931D-D4FC11A6E42F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 - Service", "03 - Service", "{CD97C483-7B08-46EA-8C5D-2F26696ACE72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordLibrary", "DiscordLibrary\DiscordLibrary.csproj", "{4B05F172-5BBA-42EC-BF44-E75CE5195FA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVPCustomCheckerProcessorTests", "MVPCustomCheckerProcessorTests\MVPCustomCheckerProcessorTests.csproj", "{C4DB0D98-6F26-4F22-BF31-1EAC5B528597}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +37,14 @@ Global
 		{89111A88-4A96-4968-8D75-064B4503A108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89111A88-4A96-4968-8D75-064B4503A108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89111A88-4A96-4968-8D75-064B4503A108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B05F172-5BBA-42EC-BF44-E75CE5195FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B05F172-5BBA-42EC-BF44-E75CE5195FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B05F172-5BBA-42EC-BF44-E75CE5195FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B05F172-5BBA-42EC-BF44-E75CE5195FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4DB0D98-6F26-4F22-BF31-1EAC5B528597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4DB0D98-6F26-4F22-BF31-1EAC5B528597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4DB0D98-6F26-4F22-BF31-1EAC5B528597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4DB0D98-6F26-4F22-BF31-1EAC5B528597}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +53,8 @@ Global
 		{7B610445-6298-44BB-802A-99F01E582E82} = {CD19F262-CF81-4869-9981-62A39BC50B48}
 		{E7509A65-1F93-41C9-9498-ED261F8F79AD} = {CD19F262-CF81-4869-9981-62A39BC50B48}
 		{89111A88-4A96-4968-8D75-064B4503A108} = {DA6A9C8D-96DA-435E-931D-D4FC11A6E42F}
+		{4B05F172-5BBA-42EC-BF44-E75CE5195FA9} = {CD97C483-7B08-46EA-8C5D-2F26696ACE72}
+		{C4DB0D98-6F26-4F22-BF31-1EAC5B528597} = {CD19F262-CF81-4869-9981-62A39BC50B48}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2C03EF44-E0FF-4812-86B8-84EFB7E938B0}

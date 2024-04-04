@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - '.github/workflows/MVPCustomFileChecker.yml'  # Trigger on changes to this workflow file
+      - 'DiscordLibrary/**'
       - 'MVPCustomCheckerLibrary/**'
       - 'MVPCustomCheckerProcessor/**'
 

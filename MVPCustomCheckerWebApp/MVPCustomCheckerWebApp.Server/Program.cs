@@ -3,9 +3,24 @@ using MVPCustomCheckerLibrary.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Determine the environment
+var environmentName = builder.Environment.EnvironmentName;
+
+// Configuration
+builder.Configuration
+	.SetBasePath(Directory.GetCurrentDirectory())
+	.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+	.AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+	.AddEnvironmentVariables();
+
+var connectionString = builder.Configuration.GetConnectionString("Database");
+Console.WriteLine($"Connection String: {connectionString}");
 builder.Services.AddDbContext<MVPCustomCheckerContext>(options =>
-	options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36))));
+	options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36)),
+	mySqlOptions => mySqlOptions.EnableRetryOnFailure(
+		maxRetryCount: 5, // The maximum number of retry attempts.
+		maxRetryDelay: TimeSpan.FromSeconds(30), // The maximum delay between retries.
+		errorNumbersToAdd: null)));
 
 
 // Add services to the container.
@@ -21,37 +36,17 @@ app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.MapGet("/filelocations", async (HttpContext httpContext) =>
 {
-    var dbContext = httpContext.RequestServices.GetRequiredService<MVPCustomCheckerContext>();
-    var locations = await dbContext.CustomFileLocations.ToListAsync();
-    return locations;
+  var dbContext = httpContext.RequestServices.GetRequiredService<MVPCustomCheckerContext>();
+  var locations = await dbContext.CustomFileLocations.ToListAsync();
+  return locations;
 })
 .WithName("GetFileLocations")
 .WithOpenApi();
@@ -59,8 +54,3 @@ app.MapGet("/filelocations", async (HttpContext httpContext) =>
 app.MapFallbackToFile("/index.html");
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

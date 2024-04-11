@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /MVPCustomCheckerBot/appsettings.Development.json
 /MVPCustomCheckerProcessor/appsettings.Development.json
+/MVPCustomCheckerWebApp/MVPCustomCheckerWebApp.Server/appsettings.Development.json

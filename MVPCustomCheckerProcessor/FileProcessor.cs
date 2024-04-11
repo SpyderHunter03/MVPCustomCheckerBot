@@ -95,7 +95,7 @@ namespace MVPCustomCheckerProcessor
                 Console.WriteLine($"Saved Settings.");
 
                 // Save the file only after confirming it has updates.
-                SaveWorkbookToFile(workbook);
+                await SaveWorkbookToFile(context, workbook);
 
                 // Send message to Discord
                 await SendMessageToDiscord(context, workbook, availableCustomDiscs, previousAvailableCustomDiscs);
@@ -123,11 +123,12 @@ namespace MVPCustomCheckerProcessor
             return workbook;
         }
 
-        private static void SaveWorkbookToFile(IWorkbook workbook)
+        private static async Task SaveWorkbookToFile(MVPCustomCheckerContext context, IWorkbook workbook)
         {
-            var localFilePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
-                $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx");
+            var fileName = $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx";
+			var localFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+				fileName);
 
             // Assuming 'filePath' contains the full path to the file, including the directory and file name
             string directoryPath = Path.GetDirectoryName(localFilePath);
@@ -145,7 +146,14 @@ namespace MVPCustomCheckerProcessor
             using var fileStream = new FileStream(localFilePath, FileMode.Create, FileAccess.Write);
             workbook.Write(fileStream);
 
-            Console.WriteLine($"File saved at {localFilePath}");
+            await context.CustomFileLocations.AddAsync(new CustomFileLocations
+            {
+                FileName = fileName,
+                FileLocation = localFilePath
+			});
+
+	        await context.SaveChangesAsync();
+	        Console.WriteLine($"File saved at {localFilePath}");
         }
 
         private static async Task SendMessageToDiscord(

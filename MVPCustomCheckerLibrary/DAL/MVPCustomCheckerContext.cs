@@ -8,5 +8,6 @@ namespace MVPCustomCheckerLibrary.DAL
         public DbSet<Settings> Settings { get; set; }
         public DbSet<AvailableMolds> AvailableMolds { get; set; }
         public DbSet<Webhooks> Webhooks { get; set; }
+        public DbSet<CustomFileLocations> CustomFileLocations { get; set; }
     }
 }

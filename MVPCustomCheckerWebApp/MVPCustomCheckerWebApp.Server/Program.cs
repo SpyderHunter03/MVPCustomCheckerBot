@@ -51,6 +51,15 @@ app.MapGet("/filelocations", async (HttpContext httpContext) =>
 .WithName("GetFileLocations")
 .WithOpenApi();
 
+app.MapGet("/availablemolds", async (HttpContext httpContext) =>
+{
+  var dbContext = httpContext.RequestServices.GetRequiredService<MVPCustomCheckerContext>();
+  var locations = await dbContext.AvailableMolds.ToListAsync();
+  return locations;
+})
+.WithName("GetAvailableMolds")
+.WithOpenApi();
+
 app.MapFallbackToFile("/index.html");
 
 app.Run();

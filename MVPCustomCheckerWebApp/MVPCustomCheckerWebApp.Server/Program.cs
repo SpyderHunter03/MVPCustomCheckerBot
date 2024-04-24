@@ -42,22 +42,38 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/filelocations", async (HttpContext httpContext) =>
+app.MapGet("/filelocations", async (MVPCustomCheckerContext dbContext) =>
 {
-  var dbContext = httpContext.RequestServices.GetRequiredService<MVPCustomCheckerContext>();
   var locations = await dbContext.CustomFileLocations.ToListAsync();
   return locations;
 })
 .WithName("GetFileLocations")
 .WithOpenApi();
 
-app.MapGet("/availablemolds", async (HttpContext httpContext) =>
+app.MapGet("/availablemolds", async (MVPCustomCheckerContext dbContext) =>
 {
-  var dbContext = httpContext.RequestServices.GetRequiredService<MVPCustomCheckerContext>();
   var locations = await dbContext.AvailableMolds.ToListAsync();
   return locations;
 })
 .WithName("GetAvailableMolds")
+.WithOpenApi();
+
+app.MapGet("/download/{fileId}", async (int fileId, MVPCustomCheckerContext dbContext) =>
+{
+  // Example: Assume files are stored in a directory named "Files" in wwwroot
+  var fileRecord = await dbContext.CustomFileLocations
+								  .FirstOrDefaultAsync(f => f.Id == fileId);
+
+  if (fileRecord == null || !File.Exists(fileRecord.FileLocation))
+  {
+	return Results.NotFound("File not found.");
+  }
+
+  var stream = File.OpenRead(fileRecord.FileLocation);
+  var contentType = "APPLICATION/octet-stream"; // Set appropriate content type
+  return Results.File(stream, contentType, fileRecord.FileName);
+})
+.WithName("DownloadFile")
 .WithOpenApi();
 
 app.MapFallbackToFile("/index.html");

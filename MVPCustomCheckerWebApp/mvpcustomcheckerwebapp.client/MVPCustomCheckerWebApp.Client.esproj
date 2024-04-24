@@ -11,5 +11,8 @@
   <ItemGroup>
     <Folder Include="src\components\buttons\" />
     <Folder Include="src\components\navigation\" />
+    <Folder Include="src\components\dropdown\" />
+    <Folder Include="src\components\loading\" />
+    <Folder Include="src\components\table\" />
   </ItemGroup>
 </Project>

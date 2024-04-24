@@ -71,7 +71,17 @@ namespace MVPCustomCheckerProcessor
 
                 Console.WriteLine($"Commencing file processing.");
                 var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
-                var previousAvailableCustomDiscs = await context.AvailableMolds.ToListAsync();
+                var previousAvailableCustomDiscs = await context.AvailableMolds.Where(am => am.DateAvailable.Date == lastProcessedDate.Date).ToListAsync();
+                
+                if (!availableCustomDiscs.Where(c => !previousAvailableCustomDiscs.Contains(c)).Any() &&
+                    !previousAvailableCustomDiscs.Where(c => !availableCustomDiscs.Contains(c)).Any())
+                {
+		            Console.WriteLine($"No updates to file since last time ran: {lastProcessedDate}");
+
+		            await context.SaveChangesAsync();
+
+		            return;
+		}
 
                 context.AvailableMolds.AddRange(availableCustomDiscs);
                 Console.WriteLine($"Saved available custom discs.");
@@ -170,13 +180,13 @@ namespace MVPCustomCheckerProcessor
             if (webhooks != null && webhooks.Count != 0)
             {
                 await DiscordWebhook.SendMessageToWebhookWithAttachment(
-                webhooks.Select(w => w.Webhook),
-                memoryStream,
-                $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx",
-                availableMolds,
-                availableMolds.Where(c => !previousAvailableMolds.Contains(c)),
-                previousAvailableMolds.Where(c => !availableMolds.Contains(c))
-            );
+                    webhooks.Select(w => w.Webhook),
+                    memoryStream,
+                    $"MVP-Custom_{DateTime.UtcNow:yyyyMMddHHmmss}.xlsx",
+                    availableMolds,
+                    availableMolds.Where(c => !previousAvailableMolds.Contains(c)),
+                    previousAvailableMolds.Where(c => !availableMolds.Contains(c))
+                );
             }
             
         }

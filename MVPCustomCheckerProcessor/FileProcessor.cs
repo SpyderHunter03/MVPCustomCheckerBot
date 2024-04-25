@@ -71,7 +71,9 @@ namespace MVPCustomCheckerProcessor
 
                 Console.WriteLine($"Commencing file processing.");
                 var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
-                var previousAvailableCustomDiscs = await context.AvailableMolds.Where(am => am.DateAvailable.Date == lastProcessedDate.Date).ToListAsync();
+
+                var previousAvailableCustomDiscsDate = await context.AvailableMolds.MaxAsync(am => am.DateAvailable);
+                var previousAvailableCustomDiscs = await context.AvailableMolds.Where(am => am.DateAvailable.Date == previousAvailableCustomDiscsDate.Date).ToListAsync();
                 
                 if (!availableCustomDiscs.Where(c => !previousAvailableCustomDiscs.Contains(c)).Any() &&
                     !previousAvailableCustomDiscs.Where(c => !availableCustomDiscs.Contains(c)).Any())

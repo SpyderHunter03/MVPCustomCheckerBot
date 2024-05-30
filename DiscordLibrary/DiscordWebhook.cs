@@ -44,23 +44,23 @@ namespace DiscordLibrary
             var retval = 0;
             using var client = new HttpClient();
 
-            foreach (var webhook in webhooks)
-            {
-                var content = JsonContent.Create(payload);
-                using var formData = new MultipartFormDataContent("boundary")
-                {
+			var content = JsonContent.Create(payload);
+			using var formData = new MultipartFormDataContent("boundary")
+				{
                     // Add the JSON part
                     { content , "payload_json" }
-                };
+				};
 
-                // Add the file attachment if a stream and filename are provided
-                if (attachmentStream != null && attachmentFileName != null)
-                {
-                    var fileContent = new StreamContent(attachmentStream);
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.ms-excel"); // Adjust the MIME type accordingly
-                    formData.Add(fileContent, "files[0]", attachmentFileName);
-                }
+			// Add the file attachment if a stream and filename are provided
+			if (attachmentStream != null && attachmentFileName != null)
+			{
+				var fileContent = new StreamContent(attachmentStream);
+				fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.ms-excel"); // Adjust the MIME type accordingly
+				formData.Add(fileContent, "files[0]", attachmentFileName);
+			}
 
+			foreach (var webhook in webhooks)
+            {
                 // Send the request
                 var properWebhook = EnsureProperWebhook(webhook);
                 var response = await client.PostAsync(properWebhook, formData);

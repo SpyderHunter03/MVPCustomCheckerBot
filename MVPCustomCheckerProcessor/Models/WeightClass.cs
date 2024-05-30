@@ -2,7 +2,7 @@
 {
     public class WeightClass
     {
-        public int Index { get; set; }
+        public int ColumnIndex { get; set; }
         public string Weight { get; set; }
 
         public string BottomWeight

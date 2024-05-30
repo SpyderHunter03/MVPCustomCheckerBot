@@ -2,7 +2,7 @@
 {
     public class ExcelCell
     {
-        public int Index { get; set; }
+        public int ColumnIndex { get; set; }
         public string? Address { get; set; }
         public byte[]? ForegroundRGB { get; set; }
         public bool IsMergedCell { get; set; }

@@ -18,5 +18,7 @@
 
             return false;
         }
-    }
+
+        public override string ToString() => $"{Plastic} {Mold} ({Weight})";
+	}
 }

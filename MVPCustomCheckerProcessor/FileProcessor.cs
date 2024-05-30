@@ -1,16 +1,14 @@
 ﻿using DiscordLibrary;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using MVPCustomCheckerLibrary.DAL;
 using MVPCustomCheckerLibrary.DAL.Entities;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Configuration;
 
 namespace MVPCustomCheckerProcessor
 {
-    public static class FileProcessor
+	public static class FileProcessor
     {
         private static readonly string ExcelUrl = "https://mvpdiscsports.com/documents/MVP-Custom.xls";
         
@@ -83,7 +81,7 @@ namespace MVPCustomCheckerProcessor
 		            await context.SaveChangesAsync();
 
 		            return;
-		}
+		        }
 
                 context.AvailableMolds.AddRange(availableCustomDiscs);
                 Console.WriteLine($"Saved available custom discs.");

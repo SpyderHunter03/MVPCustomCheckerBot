@@ -70,8 +70,11 @@ namespace MVPCustomCheckerProcessor
                 Console.WriteLine($"Commencing file processing.");
                 var availableCustomDiscs = ExcelService.GetAvailableCustomDiscs(workbook);
 
-                var previousAvailableCustomDiscsDate = await context.AvailableMolds.MaxAsync(am => am.DateAvailable);
-                var previousAvailableCustomDiscs = await context.AvailableMolds.Where(am => am.DateAvailable.Date == previousAvailableCustomDiscsDate.Date).ToListAsync();
+                var previousAvailableCustomDiscs = await context.AvailableMolds
+                                            .GroupBy(am => am.DateAvailable)
+                                            .OrderByDescending(am => am.Key)
+                                            .Select(am => am.ToList())
+                                            .FirstOrDefaultAsync();
                 
                 if (!availableCustomDiscs.Where(c => !previousAvailableCustomDiscs.Contains(c)).Any() &&
                     !previousAvailableCustomDiscs.Where(c => !availableCustomDiscs.Contains(c)).Any())
@@ -199,7 +202,7 @@ namespace MVPCustomCheckerProcessor
             Console.WriteLine($"Cell Date: {dateCellValue.Date}");
             Console.WriteLine($"LastRead Date: {lastReadDate.Date}");
 
-            return dateCellValue.Date >= lastReadDate.Date;
+            return dateCellValue.Date > lastReadDate.Date;
         }
     }
 }

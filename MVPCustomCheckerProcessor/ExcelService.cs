@@ -153,7 +153,7 @@ namespace MVPCustomCheckerProcessor
                 {
                     var avail = new AvailableMolds
                     {
-                        DateAvailable = DateTime.UtcNow.Date,
+                        DateAvailable = DateTime.UtcNow,
                         Plastic = currentWeightRow.Plastic,
                         Mold = mold,
                         Weight = weightClass.ToString(),

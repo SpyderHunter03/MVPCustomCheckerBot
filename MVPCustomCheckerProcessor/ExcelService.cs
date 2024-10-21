@@ -4,7 +4,7 @@ using NPOI.SS.UserModel;
 
 namespace MVPCustomCheckerProcessor
 {
-    public static class ExcelService
+	public static class ExcelService
     {
         public static IEnumerable<AvailableMolds> GetAvailableCustomDiscs(IWorkbook workbook)
         {
@@ -36,7 +36,14 @@ namespace MVPCustomCheckerProcessor
                 }
             }
 
-            return ProcessExcelCells(worksheetRows);
+            var processedExcelCells = ProcessExcelCells(worksheetRows).ToList();
+            var dateTimeNow = DateTime.UtcNow;
+            foreach(var cell in processedExcelCells)
+            {
+                cell.DateAvailable = dateTimeNow;
+			}
+
+			return processedExcelCells;
         }
 
         public static IEnumerable<AvailableMolds> ProcessExcelCells(IEnumerable<IEnumerable<ExcelCell>> worksheetRows)
@@ -153,7 +160,6 @@ namespace MVPCustomCheckerProcessor
                 {
                     var avail = new AvailableMolds
                     {
-                        DateAvailable = DateTime.UtcNow,
                         Plastic = currentWeightRow.Plastic,
                         Mold = mold,
                         Weight = weightClass.ToString(),
